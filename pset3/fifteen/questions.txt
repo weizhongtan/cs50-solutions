@@ -1,0 +1,4 @@
+0. Dimensions of 3x3 to 9x9 inclusive are allowed
+1. The board is represented as a two dimensional array
+2. greet() is called to greet the player at the start
+3. init(), draw(), move() and won() require implementation
