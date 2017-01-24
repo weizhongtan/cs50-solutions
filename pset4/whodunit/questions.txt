@@ -1,0 +1,12 @@
+1. stdint.h is a header file in the standard C library that allows programmers to define type definitions (for example intN_t and uintN_t) where N represents the exact byte size width of the type. This allows you to use new aliases for primitive types.
+2. Using these different type sizes allows you store different sizes of data in a struct efficiently.
+3. BYTE = 8-bit unsigned integer, DWORD = 32-bit unsigned integer, LONG = 32-bit signed integer, WORD = 16-bit unsigned integer.
+4. The start of every BMP file will start with the 2-byte hex 0x4d42, which corresponds to BM in ASCII (x86 reads bytes in reverse order when converting to integers).
+5. bfSize is the size of the entire bitmap file, biSize is the number of bytes required by the BITMAPINFOHEADER struct ie 40 bytes (14 bytes is required by the BITMAPFILEHEADER struct).
+6. If biHeight is positive, the bitmap is a bottom-up DIB and its origin is the lower-left corner. If biHeight is negative, the bitmap is a top-down DIB and its origin is the upper-left corner.
+7. biBitCount determines the number of bits that represent each pixel.
+8. fopen will return null if the file being opened in read mode does not exist. fopen may return null if the file being opened in write mode cannot be created due to user permissions.
+9. fread will read a specific size block of bytes a specific number of times as specified by the second and third arguments respectively. This is set to 1 each time so that only a chunk of data is read per time (ie a single file header struct, or a single rgb pixel struct).
+10. Line 65 sets the padding to 3. This will add 3 more bytes onto the end of each line so that each line is 12 bytes long.
+11. fseek allows you to change the location of the file pointer - which byte of the file this pointer points to. In this case (in line 84) it is moving the pointer 3 bytes ahead from its current position in the file, thereby skipping any padding there may be in the original file.
+12. SEEK_CUR can be used as the third argument to fseek to move the pointer in relation to its current position. Alternatives include SEEK_END and SEEK_SET which will move the pointer in relation to the end or beginning of the file respectively.
