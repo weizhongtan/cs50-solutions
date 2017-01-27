@@ -83,37 +83,95 @@ int main(int argc, char *argv[])
     // iterate over infile's scanlines
     for (int i = 0, biHeight = abs(old_biHeight); i < biHeight; i++)
     {
-        // pixel number of the outfile scanline
+        // keep track of outfile pixel number
         int out_cols = 0;
+        // define array which will contain data for new row in outfile
+        RGBTRIPLE row[bi.biWidth];
         for (int j = 0; j < old_biWidth; j++)
         {
             RGBTRIPLE triple;
             // read RGB triple from infile
             fread(&triple, sizeof(RGBTRIPLE), 1, inptr);
             
-            // calculate differently for scale < 1
+            // n >= 1 is a scaling up, therefore the 
             if (n >= 1)
             {
                 // determine the number of times this pixel needs to be copied to the outfile
                 while (out_cols / n < j + 1)
                 {
-                    fwrite(&triple, sizeof(RGBTRIPLE), 1, outptr);
+                    // add data to the row array
+                    row[out_cols] = triple;
                     out_cols++;
                 }
             }
             else
             {
-                
+                if (j == 0)
+                {
+                    out_cols = -1;
+                }
+                if ((int) (j * n) != out_cols)
+                {
+                    // add data to the row array
+                    out_cols = j * n;
+                    row[out_cols] = triple;
+                }
             }
         }
 
-        // skip over padding, if any
+        // skip over padding, if any, reacy for the next scanline read on the next iteration of i
         fseek(inptr, old_padding, SEEK_CUR);
-
-        // add new padding requirement to outfile
-        for (int k = 0; k < new_padding; k++)
+        
+        /*
+        *  Now that our entire row from the infile has been scaled
+        *  appropriately and stored in the row array, we need to
+        *  determine how many times this row need to be written
+        *  into the outfile
+        */
+        
+        // determine how many rows need to be written
+        if (n >= 1)
         {
-            fputc(0x00, outptr);
+            // determine the number of times this row needs to be copied to the outfile
+            while (out_rows / n < i + 1)
+            {
+                // iterate across row array and write each triple to the outfile
+                for (int k = 0; k < bi.biWidth; k++)
+                {
+                    fwrite(&row[k], sizeof(RGBTRIPLE), 1, outptr);
+                }
+                
+                // add new padding requirement to outfile
+                for (int k = 0; k < new_padding; k++)
+                {
+                    fputc(0x00, outptr);
+                }
+                
+                out_rows++;
+            }
+        }
+        else
+        {
+            if (i == 0)
+            {
+                out_rows = -1;
+            }
+            if ((int) (i * n) != out_rows)
+            {
+                // iterate across row array and write each triple to the outfile
+                for (int k = 0; k < bi.biWidth; k++)
+                {
+                    fwrite(&row[k], sizeof(RGBTRIPLE), 1, outptr);
+                }
+                
+                // add new padding requirement to outfile
+                for (int k = 0; k < new_padding; k++)
+                {
+                    fputc(0x00, outptr);
+                }
+                
+                out_rows = i * n;
+            }
         }
     }
 
