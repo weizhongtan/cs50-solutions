@@ -54,7 +54,7 @@ bool load(const char *dictionary)
     dictionary_size = 0;
     
     // initialize root node
-    root = (node*) malloc(sizeof(node));
+    root = (node*) calloc(1, sizeof(node));
     if (root == NULL)
     {
         fprintf(stderr, "Not enough memory.\n");
@@ -91,7 +91,7 @@ bool load(const char *dictionary)
             if (current_node->children[index] == NULL)
             {
                 // create new node in memory and point children[i] to it
-                current_node->children[index] = (node*) malloc(sizeof(node));
+                current_node->children[index] = (node*) calloc(1, sizeof(node));
             }
             
             // traverse down into node
