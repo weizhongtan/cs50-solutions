@@ -1,0 +1,11 @@
+0.  A lung disease also known as silicosis.
+1.  getrusage returns resource usage statistics for the process which called it.
+2.  There are 16 properties in the type struct rusage.
+3.  Passing by reference prevents data being copied, which may in itself affect the resource usage stats.
+4.  After the intial checks for command line usage, the main function sets up the rusage structs, loads the dictionary and opens the text file for a file pointer, all while benchmarking each of these steps.
+It then begins to loop over each character in the text file, up until the character read is the EOF. During each iteration, it will first check if the character is an alphabetical character, or an apostrophe (unless it occurs at the start of the file). If this is the case, it will add this character to a character array called word, and increment a counter index. If the index goes over the maximum word limit, it will read the remaining characters of the word without adding them to the word array, thereby discarding the string so it is not checked later.
+If the character is not alphabetical, it will then check if it's a number, and if it is, it will also discard it.
+Finally if neither of these cases are true, then it assumes a complete word has been found, which is stored in the word array. It adds a null terminator to the word array, increments the words counter, and checks if the word is in the dictionary. If it cannot be found, it prints the word to the console and increments the mispellings counter.
+After the loop is completed, it checks if there was an error with the file pointer, closes the text file, and checks some more function benchmarks. It the displays the statistics of the spellchecker and returns with a success (0).
+5.  fscanf may read in strings that are longer than we intended to cause a segmentation fault. Additionally, fscanf may sometimes read in additional characters such as commas, colons and quotation marks that will be appended to words, that will cause them to fail the dictionary check.
+6.  They are defined as const so that they cannot be accidentally changed within the function.
